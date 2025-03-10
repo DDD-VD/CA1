@@ -77,7 +77,7 @@ LCD Display:
 - GND → GND
 - SDA → A4 (I2C Data)
 - SCL → A5 (I2C Clock)
-```
+
 
 ## Software Requirements 💻
 
