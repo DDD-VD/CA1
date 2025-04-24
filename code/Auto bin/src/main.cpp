@@ -18,6 +18,7 @@
          #define displayVCC 0
 
          #define binFullPin 2 // принимает 1 либо 0 от заполнености
+         #define binFullOutputpin A1 //сообщает о необходимости проверки заполненности
 
          #define IRsensor 4
 
@@ -42,6 +43,7 @@
          Servo servo2;          // объявляем переменную servo типа Servo
          rgb_lcd lcd;          // объявляем переменную lcd типа rgb_lcd
          OneButton oneButton(button, true); // объявляем переменную button1 типа OneButton
+         GTimer<millis> tmr1, tmr2; // создаем таймер на millis
          long duration;
          
          unsigned long open_timer;
@@ -86,7 +88,7 @@
            
            lcd.clear();
            lcd.noDisplay();
-         
+         checkFull();
          }
          void singleClick() {
            if (button_flag == 1) {
@@ -108,14 +110,9 @@
           client.get("http://"+ServerDomain+"/update.php?level=0"+"&name="+name);        //отправляет информацию о заполнении муора на сервер
          }
          void checkFull(){
-         if (check_Full_Flag==0 && digitalRead(binFullPin)==1) { // если не было заполненности и пришел сигнал о заполненности
-           check_Full_Flag = 1; // запомнить что был сигнал о заполненности
-           binFull(); // отправить на сервер информацию о заполненности
-         }
-          if (check_Full_Flag==1 && digitalRead(binFullPin)==0) { // если был сигнал о заполненности и пришел сигнал о пустом мусорном ведре
-            check_Full_Flag = 0; // запомнить что не было заполненности
-            binEmpty(); // отправить на сервер информацию о пустом мусорном ведре
-          }
+          tmr1.start();
+          digitalWrite(binFullOutputpin, HIGH); // включить пин заполненности 
+         tmr2.start();
          }
          ////////////////////////////
          void setup() {
@@ -129,7 +126,14 @@
           pinMode(displayVCC, OUTPUT);
           pinMode(binStatusPin, OUTPUT);
           pinMode(binFullPin, INPUT);       // пин заполненности как вход
+          pinMode(binFullOutputpin, OUTPUT); // пин заполненности как выход
            open_cap();                     // открытие крышки при запуске
+
+
+           tmr1.setMode(GTMode::Timeout);
+           tmr1.setTime(1000); 
+           tmr2.setTime(500);
+
          }
          
          
@@ -163,6 +167,19 @@
              
            }
            lcd.noDisplay();
+
+          if (tmr1){
+           if (check_Full_Flag==0 && digitalRead(binFullPin)==1) { // если не было заполненности и пришел сигнал о заполненности
+            check_Full_Flag = 1; // запомнить что был сигнал о заполненности
+            binFull(); // отправить на сервер информацию о заполненности
+          }
+           if (check_Full_Flag==1 && digitalRead(binFullPin)==0) { // если был сигнал о заполненности и пришел сигнал о пустом мусорном ведре
+             check_Full_Flag = 0; // запомнить что не было заполненности
+             binEmpty(); // отправить на сервер информацию о пустом мусорном ведре
+           }
+          }
+          if (tmr2) pinMode(binFullOutputpin, LOW); // выключить пин заполненности
+          
          }
          
          
