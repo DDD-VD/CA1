@@ -53,6 +53,8 @@
          bool check_Full_Flag;
          int counter = 0;
          //////////////////////
+        void checkFull();
+
          void turn_on_VCC(){
             digitalWrite(displayVCC, HIGH);
             digitalWrite(servoVCC, HIGH);
