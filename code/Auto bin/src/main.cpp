@@ -13,11 +13,11 @@
          //--------------------НАСТРОЙКИ----------------------
          
          // ---ПОДКЛЮЧЕНИЕ---
-         #define button 3 // кнопка
+         #define button A3 // кнопка
 
          #define displayVCC 0
 
-         #define binFullPin 2 // принимает 1 либо 0 от заполнености
+         #define binFullPin A2 // принимает 1 либо 0 от заполнености
          #define binFullOutputpin A1 //сообщает о необходимости проверки заполненности
 
          #define IRsensor 4
@@ -37,7 +37,7 @@
          #include <Bridge.h>
           #include <HttpClient.h>
           //#include <Ethernet.h>
-          String ServerDomain = "172.16.76.56";
+          String ServerDomain = "192.168.75.247";
           
          Servo servo;          // объявляем переменную servo типа Servo
          Servo servo2;          // объявляем переменную servo типа Servo
@@ -71,7 +71,7 @@
            servo.write(open_angle);        // открыть крышку
            servo2.write(180-open_angle);
            oneButton.tick();
-           delay(500);                    // ждать серво
+           delay(1000);                    // ждать серво
            oneButton.tick();
            lcd.print("Open");
            lcd.setCursor(0, 1);
@@ -83,7 +83,7 @@
          void close_cap() {
            servo.write(close_angle);       // закрыть крышку
            servo2.write(180-close_angle);
-           delay(500);                    // ждать серво
+           delay(1000);                    // ждать серво
            
            open_flag = 0;           // флаг что крышка закрыта
            digitalWrite(binStatusPin,LOW);                  
